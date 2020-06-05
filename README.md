@@ -1,6 +1,6 @@
-rest_api
+rest_api, python-api TRON-blockchain
 =============
-python-api TRON-blockchain
+
 This repository contains boilerplate code for a RESTful API based on Flask and Flask-RESTPlus.
 
 
