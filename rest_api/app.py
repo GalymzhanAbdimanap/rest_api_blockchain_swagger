@@ -2,11 +2,11 @@ import logging.config
 
 import os
 from flask import Flask, Blueprint
-from rest_api_demo import settings
-from rest_api_demo.api.blog.endpoints.posts import ns as blog_posts_namespace
-from rest_api_demo.api.blog.endpoints.categories import ns as blog_categories_namespace
-from rest_api_demo.api.restplus import api
-from rest_api_demo.database import db
+from rest_api import settings
+from rest_api.api.blockchain.endpoints.payable import ns as payable_namespace
+from rest_api.api.blockchain.endpoints.free import ns as free_namespace
+from rest_api.api.restplus import api
+
 
 app = Flask(__name__)
 logging_conf_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '../logging.conf'))
@@ -16,8 +16,6 @@ log = logging.getLogger(__name__)
 
 def configure_app(flask_app):
     flask_app.config['SERVER_NAME'] = settings.FLASK_SERVER_NAME
-    flask_app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
-    flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = settings.SQLALCHEMY_TRACK_MODIFICATIONS
     flask_app.config['SWAGGER_UI_DOC_EXPANSION'] = settings.RESTPLUS_SWAGGER_UI_DOC_EXPANSION
     flask_app.config['RESTPLUS_VALIDATE'] = settings.RESTPLUS_VALIDATE
     flask_app.config['RESTPLUS_MASK_SWAGGER'] = settings.RESTPLUS_MASK_SWAGGER
@@ -29,11 +27,9 @@ def initialize_app(flask_app):
 
     blueprint = Blueprint('api', __name__, url_prefix='/api')
     api.init_app(blueprint)
-    api.add_namespace(blog_posts_namespace)
-    api.add_namespace(blog_categories_namespace)
+    api.add_namespace(payable_namespace)
+    api.add_namespace(free_namespace)
     flask_app.register_blueprint(blueprint)
-
-    db.init_app(flask_app)
 
 
 def main():
