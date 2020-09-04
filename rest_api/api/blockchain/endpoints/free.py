@@ -122,7 +122,7 @@ class getChecks(Resource):
                                         )
                     check = check['constant_result']
                     decodeH = decode_hex(check[0])
-                    decodeA= decode_abi(('string[]','uint256[]','uint256[]','uint256[]','address[]','uint256','string','bool','uint256','string','bool',),decodeH)
+                    decodeA= decode_abi(('string[]','uint256[]','uint256[]','uint256[]','uint256[]','uint256','string','bool','uint256','string','bool',),decodeH)
                     print(decodeA)
                     #res_data = {"nameOfGood":decodeA[0], "amountOfgood":decodeA[1], "price":decodeA[2], "sumPrice":decodeA[3], "addressOfContract":decodeA[4], "id_check":decodeA[5] ,"timestamp":decodeA[6], "status":decodeA[7], "allSumPrice":decodeA[8], "typeOfOp":decodeA[9], "isCanceled":decodeA[10]}
                     addressOfContract = decodeA[4]
@@ -154,14 +154,14 @@ class getChecks(Resource):
                                         )
                     check = check['constant_result']
                     decodeH = decode_hex(check[0])
-                    decodeA= decode_abi(('string[]','uint256[]','uint256[]','uint256[]','address[]','uint256','string','bool','uint256','string','bool',),decodeH)
+                    decodeA= decode_abi(('string[]','uint256[]','uint256[]','uint256[]','uint256[]','uint256','string','bool','uint256','string','bool',),decodeH)
                     print(decodeA)
                     #res_data = {"nameOfGood":decodeA[0], "amountOfgood":decodeA[1], "price":decodeA[2], "sumPrice":decodeA[3], "addressOfContract":decodeA[4], "id_check":decodeA[5] ,"timestamp":decodeA[$
                     addressOfContract = decodeA[4]
                     #print(len(addressOfContract))
                     goods=[]
                     for i in range(len(addressOfContract)):
-                        good_data = {"nameOfGood":decodeA[0][i], "amountOfGood":decodeA[1][i], "price":decodeA[2][i], "sumPrice":decodeA[3][i], "addressOfContract":decodeA[4][i], "id_good":i}
+                        good_data = {"nameOfGood":decodeA[0][i], "amountOfGood":decodeA[1][i], "price":decodeA[2][i], "sumPrice":decodeA[3][i], "addressOfContract":str(decodeA[4][i]), "id_good":decodeA[4][i]}
                         goods.append(good_data)
                     # timestamp = decodeA[6]
                     # Test. On production delete if and else
