@@ -57,7 +57,7 @@ jwt = JWTManager(app)
 logging_conf_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '../logging.conf'))
 logging.config.fileConfig(logging_conf_path)
 # Configure logger, 
-logging.basicConfig(level = log_level, filename = 'logs/logs.txt', format='%(asctime)s :: %(name)s - %(levelname)s :: %(message)s')
+# logging.basicConfig(level = log_level, filename = 'logs/logs.txt', format='%(asctime)s :: %(name)s - %(levelname)s :: %(message)s')
 log = logging.getLogger(__name__)
 
 
