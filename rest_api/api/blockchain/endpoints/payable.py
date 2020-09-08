@@ -123,7 +123,8 @@ class confirmGoods(Resource):
 
 @ns.route('/saleOfGoods')
 class saleOfGoods(Resource):
-    """Allows the sale of goods that the user has on the Blockchain Market. Return hash address of transaction."""
+    """Allows the sale of goods that the user has on the Blockchain Market. Return hash address of transaction.
+    For work this function, in smart contract(MarketPlace) must have TOKENS."""
 
     @jwt_required
     @api.expect(saleOfGoods)
