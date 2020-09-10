@@ -44,7 +44,7 @@ tron = Tron(full_node=full_node,
 #DEFAULT_ADDRESS = '41FCF23797364C955A23B73F711219FBF5564B2C17'
 
 # Import support modules from this project
-from rest_api.api.blockchain.utils import getIndexOfGoods, getIndexOfChecks, getAddressOfgoods, SMART_CONTRACT_ADDRESS, DEFAULT_ADDRESS, createAccount_blockchain
+from rest_api.api.blockchain.utils import getIndexOfGoods, getIndexOfChecks, getAddressOfgoods, SMART_CONTRACT_ADDRESS, DEFAULT_ADDRESS, createAccount_blockchain, getTokens_utils
 from rest_api.api.blockchain.serializers import getChecks, getWallet, balanceOfToken, balanceOfTrx, registration, oauth
 from rest_api.api.restplus import api
 from rest_api.api.blockchain.endpoints.oauth import createToken, auth, verify_token
