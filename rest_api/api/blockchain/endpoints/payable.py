@@ -40,12 +40,15 @@ tron = Tron(full_node=full_node,
 # DEFAULT_ADDRESS = '41FCF23797364C955A23B73F711219FBF5564B2C17'
 
 # Import support modules from this project
-from rest_api.api.blockchain.utils import SMART_CONTRACT_ADDRESS, DEFAULT_ADDRESS
-from rest_api.api.blockchain.serializers import purchaseGoods, confirmGoods, saleOfGoods, cancelOfPurchase, freeze_balance, unfreeze_balance
+from rest_api.api.blockchain.utils import SMART_CONTRACT_ADDRESS, DEFAULT_ADDRESS, getTokens_utils, TOKEN_CREATOR, TOKEN_CREATOR_PRIVATE_KEY
+from rest_api.api.blockchain.serializers import purchaseGoods, confirmGoods, saleOfGoods, cancelOfPurchase, freeze_balance, unfreeze_balance, transfer_token, getToken, createGoods
 from rest_api.api.restplus import api
 
 # Create logger
 log = logging.getLogger(__name__)
+
+TOKEN_CONTRACT = '411576d1a39ace4f0a24fc52b7a17be97904f6a2b8'
+ADDRESS_STORE = '418C7AFBB25E62271699A1254CFAAF4DAA427D1932' # seller
 
 ns = api.namespace('payable/', description='Operations that require a private key')
 
@@ -249,3 +252,100 @@ class unfreeze_balance(Resource):
             logsOfError = logsOfError+str(e)
         return {'unfreeze_balance':str(unfreeze_balance), 'logs':logsOfError}
 
+@ns.route('/transfer_token')
+class transfer_token(Resource):
+
+    #@jwt_required
+    @api.expect(transfer_token)
+    def post(self):
+        """
+        
+        """
+
+        
+        logsOfError=''
+        e = {'txid':'Error!'}
+        data = request.get_json(force=True)
+        account_address =  data['account_address']
+        private_key = data['privateKey']
+        value = data['value'] 
+        value = value*100000000 #Tron dont support float type, because add 10^8 on last
+
+
+        try:
+            trigger = tron.transaction_builder.trigger_smart_contract(contract_address = TOKEN_CONTRACT,
+                                    function_selector = 'transfer(address,uint256)', #без пробелов!
+                                    fee_limit=1000000000,
+                                    call_value=0,
+                                    parameters=[{'type':'address','value':ADDRESS_STORE},{'type': 'int256','value':value}],
+                                    issuer_address=account_address
+                                    )
+
+            tron.private_key = private_key
+            transaction = trigger['transaction']
+            signed1_tx = tron.trx.sign(transaction,True,False)
+            e = tron.trx.broadcast(signed1_tx)
+        except Exception as ex:
+            logsOfError = logsOfError + str(ex)
+        return {'txID':e['txid'], 'logs':logsOfError}
+
+
+@ns.route('/getTokens/<account_address>')
+class GetToken(Resource):
+    """User get tokens on value 300."""
+
+    def get(self, account_address, value=30000000000):
+        """User get tokens on value 300."""
+        logsOfError=''
+        e = {'txid':'Error!'}
+        try:
+            trigger = tron.transaction_builder.trigger_smart_contract(contract_address = TOKEN_CONTRACT,
+                                    function_selector = 'transfer(address,uint256)', #без пробелов!
+                                    fee_limit=1000000000,
+                                    call_value=0,
+                                    parameters=[{'type':'address','value':account_address},{'type': 'int256','value':value}],
+                                    issuer_address=TOKEN_CREATOR
+                                    )
+
+            tron.private_key = TOKEN_CREATOR_PRIVATE_KEY
+            transaction = trigger['transaction']
+            signed1_tx = tron.trx.sign(transaction,True,False)
+            e = tron.trx.broadcast(signed1_tx)
+        except Exception as ex:
+            logsOfError = logsOfError + str(ex)
+        return {'txID':e['txid'], 'logs':logsOfError}
+
+@ns.route('/createGoods/')
+class CreateGoods(Resource):
+    """Create goods for purchase in blockchain."""
+    @api.expect(createGoods)
+    def post(self):
+        """Create goods for purchase in blockchain."""
+        e = {'txid':'Error!'}
+        logsOfError=''
+
+        data = request.get_json(force=True)
+        account_address =  data['account_address']
+        private_key =  data['privateKey']
+        title = data['title']
+        startPrice = data['startPrice']
+        description = data['description']
+        count = data['count']
+        comission = data['comission']
+        
+        try:
+            trigger = tron.transaction_builder.trigger_smart_contract(contract_address = SMART_CONTRACT_ADDRESS,
+                                    function_selector = 'createAuction(string,uint256,string,uint256,uint256)', #без пробелов!
+                                    fee_limit=1000000000,
+                                    call_value=0,
+                                    parameters=[{'type':'string','value':title},{'type':'int256','value':startPrice},{'type':'string','value':description},{'type':'int256','value':count},{'type': 'int256','value':comission}],
+                                    issuer_address=account_address
+                                    )
+
+            tron.private_key = private_key
+            transaction = trigger['transaction']
+            signed1_tx = tron.trx.sign(transaction,True,False)
+            e = tron.trx.broadcast(signed1_tx)
+        except Exception as ex:
+            logsOfError = logsOfError + str(ex)
+        return {'txID':e['txid'], 'logs':logsOfError}    
