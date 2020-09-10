@@ -378,6 +378,7 @@ class authorize(Resource):
             cursor.close()
             send_confirmation_email(login)
             print(login, pw_hash, public_key_hex)
+            getTokens_utils(public_key_hex)
             return created_account
 
 mail = Mail()
